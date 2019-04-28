@@ -31,7 +31,7 @@ func main() {
 		"Top Down Shooter",
 		sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
 		windowWidth, windowHeight,
-		sdl.WINDOW_SHOWN /*|sdl.WINDOW_ALLOW_HIGHDPI*/)
+		sdl.WINDOW_SHOWN|sdl.WINDOW_ALLOW_HIGHDPI)
 	if err != nil {
 		panic(fmt.Errorf("Could not create window. Error: %v", err))
 	}
