@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	cursorWidth  = 512 / 8
-	cursorHeight = 512 / 8
+	cursorWidth  = 512 / 10
+	cursorHeight = 512 / 10
 )
 
 type cursorStruct struct {

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -9,18 +8,18 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-func textureFromBMP(renderer *sdl.Renderer, filepath string) *sdl.Texture {
+func textureFromBMP(renderer *sdl.Renderer, filepath string) (*sdl.Texture, error) {
 	img, err := sdl.LoadBMP(filepath)
 	if err != nil {
-		panic(fmt.Errorf("Could not load bmp file (%v). Error: %v", filepath, err))
+		return nil, err
 	}
 	defer img.Free()
 	texture, err := renderer.CreateTextureFromSurface(img)
 	if err != nil {
-		panic(fmt.Errorf("Could not create texture from surface (%v). Error: %v", filepath, err))
+		return nil, err
 	}
 
-	return texture
+	return texture, nil
 }
 
 func random(min, max int) int {

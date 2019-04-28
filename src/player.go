@@ -9,13 +9,15 @@ import (
 const playerSize = 50
 
 type playerStruct struct {
-	x, y          float64
-	isAlive       bool
-	textureRect   sdl.Rect
-	texture       *sdl.Texture
-	movementSpeed float64
-	health        int
-	angle         float64
+	x, y              float64
+	isAlive           bool
+	textureRect       sdl.Rect
+	texture           *sdl.Texture
+	movementSpeed     float64
+	health            int
+	angle             float64
+	bullets           []bulletStruct
+	timeSinceLastShot float64
 }
 
 func newPlayer(x, y, movementSpeed float64, texture *sdl.Texture, textureRect sdl.Rect) (p playerStruct) {
@@ -35,6 +37,20 @@ func (p *playerStruct) update(dt float64) {
 	dy := float64(mouseY) - p.y
 	p.angle = math.Atan2(dy, dx) * 180 / math.Pi
 
+	// Shooting
+	p.timeSinceLastShot += dt
+	if mouseState == 1 {
+		if p.timeSinceLastShot >= 0.3 {
+			p.bullets = append(p.bullets, newBullet(p.texture, sdl.Rect{X: 32, Y: 0, W: 32, H: 32}, p.angle, p.x, p.y, 10))
+			p.timeSinceLastShot = 0
+		}
+	}
+
+	// update bullets
+	for _, bullet := range p.bullets {
+		bullet.update(dt)
+	}
+
 	// WASD Movement
 	keys := sdl.GetKeyboardState()
 	if keys[sdl.SCANCODE_W] == 1 {
@@ -49,6 +65,10 @@ func (p *playerStruct) update(dt float64) {
 }
 
 func (p *playerStruct) render(renderer *sdl.Renderer) {
+	for _, bullet := range p.bullets {
+		bullet.render(renderer)
+	}
+
 	renderer.CopyEx(
 		p.texture,
 		&p.textureRect,

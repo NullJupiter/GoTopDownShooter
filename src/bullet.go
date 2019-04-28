@@ -16,6 +16,7 @@ type bulletStruct struct {
 	angle         float64
 	texture       *sdl.Texture
 	textureRect   sdl.Rect
+	xDir, yDir    float64
 }
 
 func newBullet(texture *sdl.Texture, textureRect sdl.Rect, angle, x, y, movementSpeed float64) (b bulletStruct) {
@@ -24,12 +25,15 @@ func newBullet(texture *sdl.Texture, textureRect sdl.Rect, angle, x, y, movement
 	b.movementSpeed = movementSpeed
 	b.texture = texture
 	b.textureRect = textureRect
+	b.xDir = float64(mouseX) - b.x
+	b.yDir = float64(mouseY) - b.y
 
 	return b
 }
 
 func (b *bulletStruct) update(dt float64) {
-
+	b.x += b.movementSpeed * dt * b.xDir
+	b.y += b.movementSpeed * dt * b.yDir
 }
 
 func (b *bulletStruct) render(renderer *sdl.Renderer) {
@@ -37,7 +41,7 @@ func (b *bulletStruct) render(renderer *sdl.Renderer) {
 		b.texture,
 		&b.textureRect,
 		&sdl.Rect{X: int32(b.x - bulletWidth/2), Y: int32(b.y - bulletHeight/2), W: bulletWidth, H: bulletHeight},
-		b.angle+90,
+		b.angle,
 		nil,
 		sdl.FLIP_NONE)
 }
