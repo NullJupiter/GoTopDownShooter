@@ -47,8 +47,8 @@ func (p *playerStruct) update(dt float64) {
 	}
 
 	// update bullets
-	for _, bullet := range p.bullets {
-		bullet.update(dt)
+	for i := 0; i < len(p.bullets); i++ {
+		p.bullets[i].update(dt)
 	}
 
 	// WASD Movement
@@ -65,8 +65,8 @@ func (p *playerStruct) update(dt float64) {
 }
 
 func (p *playerStruct) render(renderer *sdl.Renderer) {
-	for _, bullet := range p.bullets {
-		bullet.render(renderer)
+	for i := 0; i < len(p.bullets); i++ {
+		p.bullets[i].render(renderer)
 	}
 
 	renderer.CopyEx(
