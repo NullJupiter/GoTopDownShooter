@@ -1,12 +1,25 @@
 package main
 
 import (
-	"math"
 	"math/rand"
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
+
+type size struct {
+	x, y int
+}
+
+type circle struct {
+	x, y float64
+	r    float64
+}
+
+type rectangle struct {
+	x, y float64
+	w, h float64
+}
 
 func textureFromBMP(renderer *sdl.Renderer, filepath string) (*sdl.Texture, error) {
 	img, err := sdl.LoadBMP(filepath)
@@ -27,15 +40,10 @@ func random(min, max int) int {
 	return rand.Intn(max-min) + min
 }
 
-type circle struct {
-	x, y   float64
-	radius float64
-}
-
-func isColliding(c1, c2 circle) bool {
+/*func isColliding(c1, c2 circle) bool {
 	dist := math.Sqrt(math.Pow(c2.x-c1.x, 2) + math.Pow(c2.y-c1.y, 2))
 	return dist <= c1.radius+c2.radius
-}
+}*/
 
 func isHover(mouseX, mouseY int32, buttonRect sdl.Rect) bool {
 	if mouseX >= buttonRect.X && mouseX <= buttonRect.X+buttonRect.W {

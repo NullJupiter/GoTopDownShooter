@@ -6,8 +6,6 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-const playerSize = 50
-
 type playerStruct struct {
 	x, y              float64
 	isAlive           bool
@@ -18,6 +16,8 @@ type playerStruct struct {
 	angle             float64
 	bullets           []bulletStruct
 	timeSinceLastShot float64
+	size              size
+	collisionMask     circle
 }
 
 func newPlayer(x, y, movementSpeed float64, texture *sdl.Texture, textureRect sdl.Rect) (p playerStruct) {
@@ -27,11 +27,14 @@ func newPlayer(x, y, movementSpeed float64, texture *sdl.Texture, textureRect sd
 	p.textureRect = textureRect
 	p.health = 100
 	p.isAlive = true
+	p.size.x = 32
+	p.size.y = 32
+	p.collisionMask = circle{x: x, y: y, r: float64(p.size.x / 2)}
 
 	return p
 }
 
-func (p *playerStruct) update(dt float64) {
+func (p *playerStruct) update(dt float64, gameMap *mapStruct) {
 	// look in direction of mouse
 	dx := float64(mouseX) - p.x
 	dy := float64(mouseY) - p.y
@@ -62,6 +65,37 @@ func (p *playerStruct) update(dt float64) {
 	} else if keys[sdl.SCANCODE_D] == 1 {
 		p.x += p.movementSpeed * dt
 	}
+	// update collision mask
+	p.collisionMask.x, p.collisionMask.y = p.x, p.y
+
+	// update map collisions
+	for _, tile := range gameMap.tiles {
+		if tile.isCollider {
+			collision, dir := p.collidesWithRectangle(tile.collsisionMask)
+			if collision {
+				switch dir {
+				case 1:
+					//p.x = tile.collsisionMask.x + tile.collsisionMask.w + p.collisionMask.r
+					p.x += p.movementSpeed * dt
+					break
+				case 2:
+					//p.x = tile.collsisionMask.x - p.collisionMask.r
+					p.x -= p.movementSpeed * dt
+					break
+				case 3:
+					//p.y = tile.collsisionMask.y + tile.collsisionMask.h + p.collisionMask.r
+					p.y += p.movementSpeed * dt
+					break
+				case 4:
+					//p.y = tile.collsisionMask.y - p.collisionMask.r
+					p.y -= p.movementSpeed * dt
+					break
+				default:
+					break
+				}
+			}
+		}
+	}
 }
 
 func (p *playerStruct) render(renderer *sdl.Renderer) {
@@ -72,8 +106,38 @@ func (p *playerStruct) render(renderer *sdl.Renderer) {
 	renderer.CopyEx(
 		p.texture,
 		&p.textureRect,
-		&sdl.Rect{X: int32(p.x - playerSize/2), Y: int32(p.y - playerSize/2), W: playerSize, H: playerSize},
+		&sdl.Rect{X: int32(p.x - float64(p.size.x/2)), Y: int32(p.y - float64(p.size.y/2)), W: int32(p.size.x), H: int32(p.size.y)},
 		p.angle+90,
 		nil,
 		sdl.FLIP_NONE)
+}
+
+func (p *playerStruct) collidesWithRectangle(rect rectangle) (bool, int) {
+	if (p.collisionMask.r + rect.w/2) >= math.Sqrt(math.Pow(p.x-rect.x, 2)+math.Pow(p.y-rect.y, 2)) {
+		playerBottom := p.collisionMask.y + p.collisionMask.r
+		rectBottom := rect.y + rect.h
+		playerRight := p.collisionMask.x + p.collisionMask.r
+		rectRight := rect.x + rect.w
+
+		bCollision := rectBottom - p.collisionMask.y - p.collisionMask.r
+		tCollision := playerBottom - rect.y
+		lCollision := playerRight - rect.x
+		rCollision := rectRight - p.collisionMask.x - p.collisionMask.r
+
+		if tCollision < bCollision && tCollision < lCollision && tCollision < rCollision {
+			//Top collision
+			return true, 4
+		} else if bCollision < tCollision && bCollision < lCollision && bCollision < rCollision {
+			//bottom collision
+			return true, 3
+		} else if lCollision < rCollision && lCollision < tCollision && lCollision < bCollision {
+			//Left collision
+			return true, 2
+		} else if rCollision < lCollision && rCollision < tCollision && rCollision < bCollision {
+			//Right collision
+			return true, 1
+		}
+	}
+
+	return false, 0
 }

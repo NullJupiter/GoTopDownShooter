@@ -31,7 +31,7 @@ func main() {
 		"Top Down Shooter",
 		sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
 		windowWidth, windowHeight,
-		sdl.WINDOW_SHOWN|sdl.WINDOW_ALLOW_HIGHDPI)
+		sdl.WINDOW_SHOWN /*|sdl.WINDOW_ALLOW_HIGHDPI*/)
 	if err != nil {
 		panic(fmt.Errorf("Could not create window. Error: %v", err))
 	}
@@ -75,7 +75,7 @@ func main() {
 	// create cursor
 	cursor := newCursor(cursorTexture, sdl.Rect{X: 0, Y: 0, W: 512, H: 512})
 	// create player
-	player := newPlayer(0, 0, 350, spriteSheet, sdl.Rect{X: 0, Y: 0, W: 32, H: 32})
+	player := newPlayer(windowWidth/2-16, windowHeight/2-16, 350, spriteSheet, sdl.Rect{X: 0, Y: 0, W: 32, H: 32})
 
 	// create variables for fps calculations
 	var (
@@ -128,7 +128,7 @@ func main() {
 		cursor.render(renderer)
 
 		// update and render the player
-		player.update(dt)
+		player.update(dt, &gameMap)
 		player.render(renderer)
 
 		// present the scene
