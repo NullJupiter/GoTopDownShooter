@@ -31,14 +31,14 @@ func main() {
 		"Top Down Shooter",
 		sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
 		windowWidth, windowHeight,
-		sdl.WINDOW_SHOWN /*|sdl.WINDOW_ALLOW_HIGHDPI*/)
+		sdl.WINDOW_SHOWN)
 	if err != nil {
 		panic(fmt.Errorf("Could not create window. Error: %v", err))
 	}
 	defer window.Destroy()
 
 	// put the game into fullscreen
-	if err := window.SetFullscreen(sdl.WINDOW_FULLSCREEN); err != nil {
+	if err := window.SetFullscreen(sdl.WINDOW_FULLSCREEN_DESKTOP); err != nil {
 		log.Fatalf("could not set window to fullscreen: %v", err)
 	}
 
@@ -105,7 +105,7 @@ func main() {
 		// print current fps
 		fpsTime += dt
 		if fpsTime >= 1 {
-			//fmt.Println("\033cFPS:", fpsCounter)
+			fmt.Println("\033cFPS:", fpsCounter)
 			fpsTime = 0
 			fpsCounter = 0
 		} else {
