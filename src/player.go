@@ -44,7 +44,7 @@ func (p *playerStruct) update(dt float64, gameMap *mapStruct) {
 	p.timeSinceLastShot += dt
 	if mouseState == 1 {
 		if p.timeSinceLastShot >= 0.3 {
-			p.bullets = append(p.bullets, newBullet(p.texture, sdl.Rect{X: 32, Y: 0, W: 32, H: 32}, p.angle, p.x, p.y, 10))
+			p.bullets = append(p.bullets, newBullet(p.texture, sdl.Rect{X: 32, Y: 0, W: 32, H: 32}, p.angle, p.x, p.y, 1000))
 			p.timeSinceLastShot = 0
 		}
 	}

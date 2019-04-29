@@ -1,6 +1,8 @@
 package main
 
 import (
+	"math"
+
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -27,6 +29,9 @@ func newBullet(texture *sdl.Texture, textureRect sdl.Rect, angle, x, y, movement
 	b.textureRect = textureRect
 	b.xDir = float64(mouseX) - b.x
 	b.yDir = float64(mouseY) - b.y
+	magnitude := math.Sqrt(math.Pow(b.xDir, 2) + math.Pow(b.yDir, 2))
+	b.xDir /= magnitude
+	b.yDir /= magnitude
 
 	return b
 }
