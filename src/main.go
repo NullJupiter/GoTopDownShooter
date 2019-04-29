@@ -49,6 +49,9 @@ func main() {
 	}
 	defer renderer.Destroy()
 
+	sdl.SetHint(sdl.HINT_RENDER_SCALE_QUALITY, "linear")
+	renderer.SetLogicalSize(windowWidth, windowHeight)
+
 	// load the map
 	gameMap, err := loadMap("assets/map.txt", renderer)
 	if err != nil {
@@ -59,8 +62,6 @@ func main() {
 	if _, err = sdl.ShowCursor(0); err != nil {
 		log.Fatalf("could not hide cursor: %v", err)
 	}
-
-	// sdl.SetHint(sdl.HINT_RENDER_SCALE_QUALITY, "0")
 
 	// load spriteSheet
 	spriteSheet, err := textureFromBMP(renderer, "assets/spriteSheet.bmp")
@@ -104,7 +105,7 @@ func main() {
 		// print current fps
 		fpsTime += dt
 		if fpsTime >= 1 {
-			fmt.Println("\033cFPS:", fpsCounter)
+			//fmt.Println("\033cFPS:", fpsCounter)
 			fpsTime = 0
 			fpsCounter = 0
 		} else {
